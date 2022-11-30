@@ -1,3 +1,4 @@
+import json
 import ScrapeWebsite
 import codecs
 from bokeh.plotting import figure
@@ -10,9 +11,14 @@ this is just a little file for all the important kewords/commands I need to reme
 
 Also: I'm assuming our profs open the html file, and I need to make the html file be able to use our json files
 """
+filef = open('CovidData.json')
+covidData = json.load(filef)
+filef.close()
+
+print(covidData['us']['Daily Deaths'])
 
 plot = figure()
-plot.circle([1,2], [3,4])
+#plot.line(covidData["us"]["Dates"], covidData["us"]["Daily Deaths"])
 
 html = file_html(plot, CDN, "my plot")
 
