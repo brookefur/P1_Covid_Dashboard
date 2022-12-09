@@ -157,3 +157,4 @@ def json_frame_writer(countries,site,filename='CovidData.json'):
     out = json.dumps(out)
     with open(filename, 'w') as outfile:
         outfile.write(out) 
+

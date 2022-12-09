@@ -28,7 +28,7 @@ import seaborn as sns
 ## testing json list writing
 
 
-short_list=['us','france','greece','germany','spain']
+short_list=['us','india','france','germany','brazil','japan','italy','russia','turkey','spain','taiwan','iran']
 ScrapeWebsite.json_frame_writer(short_list,'worldometer')
 
 
