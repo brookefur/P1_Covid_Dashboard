@@ -8,6 +8,7 @@ from bokeh.palettes import viridis
 from bokeh.models import FactorRange
 from bokeh.transform import dodge
 from bokeh.models import TabPanel, Tabs
+from bokeh.models import Div
 """
 This file takes the json file from the datascraping, and uses Bokeh to make an interactive html site
 - Making assumption that in the JSON, you already got the data for the countries you want (don't need input on what countries to select out of JSON)
@@ -76,7 +77,7 @@ def dataDisplay(jsonName):
     x2 = [nameCountries[0],nameCountries[1]]
     xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
     yplot = (totalDeaths[0][-1],totalDeaths[1][-1])
-    smallplot2 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="", title=titletext)
+    smallplot2 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="")
     smallplot2.vbar(x=xplot, top=yplot, width=0.2 )
     smallplot2.yaxis.formatter.use_scientific = False
 
@@ -98,8 +99,8 @@ def dataDisplay(jsonName):
 
     smallplots1 = row(smallplot1,smallplot2)
     smallplots2 = row(smallplot3,smallplot4)
-    smallplot = column(smallplots1,smallplots2)
-
+    text = Div(text=titletext,align='center')
+    smallplot = column(text, smallplots1,smallplots2)
 
     #interactive plot, uses tabs
     tabs = []
