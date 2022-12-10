@@ -5,8 +5,8 @@ from bokeh.resources import CDN
 from bokeh.embed import file_html
 from bokeh.layouts import row, column
 from bokeh.palettes import viridis
-from bokeh.models import FactorRange, ColumnDataSource
-from bokeh.transform import dodge
+from bokeh.models import DatePicker, CustomJS
+from datetime import date
 """
 This is a test file for running bokeh and creating html files. I will be creating the official file later,
 this is just a little file for all the important kewords/commands I need to remember.
@@ -42,46 +42,29 @@ for i in covidData.keys():
     totalDper100.append(list(covidData[i]['Total Deaths per 100k'].values()))
 
 
+plot = figure(y_range = nameCountries)
+bardata = []
+for i in range(0,len(nameCountries)):
+    bardata.append(dailyDper100[i][-1])
+plot.hbar(right=bardata,y=nameCountries)
 
+callback = CustomJS(args=dict(x=nameCountries,DDper100=dailyDper100,barplot=plot,dates=dates), code = """
+    console.log('date_picker: value=' + this.value, this.toString())
+    const a = cd_obj.value;
+    const y = [];  
+    index = dates.indexOf(a)
+    for (let i = 0; i < x.length(); i++) {
+        y[i] = DDper100[i][a];
+    } 
+    barplot.hbar(right=y,y=x)
+""")
 
+date_picker = DatePicker(title='Select date', value=dates[-1].date(), min_date=dates[0].date(), max_date=dates[-1].date(),height=50,width=100)
+date_picker.js_on_change("value", callback)
 
+bokehHTML = column(date_picker,plot)
+html = file_html(bokehHTML, CDN, "COVID Dashboard")
 
-# only using 2 countries, displaying all of their data
-#Make title be htmal or something, it gets cut off
-titletext="Data for " + nameCountries[0].upper() + " and "+nameCountries[1].upper() + " on " + dates[-1].strftime("%m/%d/%Y")
-
-x1 = ["Daily Deaths"]
-x2 = [nameCountries[0],nameCountries[1]]
-xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
-yplot = (dailyDeaths[0][-1],dailyDeaths[1][-1])
-smallplot1 = figure(x_range=FactorRange(*xplot), height=200, title=titletext,width=200,toolbar_location=None, tools="")
-smallplot1.vbar(x=xplot, top=yplot, width=0.2, )
-
-x1 = ["Total Deaths"]
-x2 = [nameCountries[0],nameCountries[1]]
-xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
-yplot = (totalDeaths[0][-1],totalDeaths[1][-1])
-smallplot2 = figure(x_range=FactorRange(*xplot), height=200,width=200,toolbar_location=None, tools="")
-smallplot2.vbar(x=xplot, top=yplot, width=0.2 )
-
-x1 = ["Daily Deaths per 100k"]
-x2 = [nameCountries[0],nameCountries[1]]
-xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
-yplot = (dailyDper100[0][-1],dailyDper100[1][-1])
-smallplot3 = figure(x_range=FactorRange(*xplot), height=200,width=200,toolbar_location=None, tools="")
-smallplot3.vbar(x=xplot, top=yplot, width=0.2 )
-
-x1 = ["Total Deaths per 100k"]
-x2 = [nameCountries[0],nameCountries[1]]
-xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
-yplot = (totalDper100[0][-1],totalDper100[1][-1])
-smallplot4 = figure(x_range=FactorRange(*xplot), height=200,width=200,toolbar_location=None, tools="")
-smallplot4.vbar(x=xplot, top=yplot, width=0.2 )
-
-plot1 = row(smallplot1,smallplot2)
-plot2 = row(smallplot3,smallplot4)
-plots = column(plot1,plot2)
-html = file_html(plots, CDN, "COVID Dashboard")
 f = open('BokehTest.html', 'w')
 f.write(html)
 f.close()
