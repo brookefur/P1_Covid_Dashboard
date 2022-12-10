@@ -7,7 +7,7 @@ from bokeh.layouts import row, column
 from bokeh.palettes import viridis
 from bokeh.models import FactorRange
 from bokeh.transform import dodge
-
+from bokeh.models import TabPanel, Tabs
 """
 This file takes the json file from the datascraping, and uses Bokeh to make an interactive html site
 - Making assumption that in the JSON, you already got the data for the countries you want (don't need input on what countries to select out of JSON)
@@ -42,7 +42,7 @@ for i in covidData.keys():
 
 
 #plotting historical data as a line graph
-lineplot = figure(x_axis_type="datetime", title="Daily Deaths since 2022-02-15")
+lineplot = figure(x_axis_type="datetime", title="Daily Deaths since 2022-02-15",height=600,width=600)
 colorNames = viridis(len(nameCountries))
 for i in range(0,len(nameCountries)):
     Cname = nameCountries[i]
@@ -56,7 +56,7 @@ topDeaths = []
 for i in totalDeaths:
     topDeaths.append(i[-1])
 titletext = "Total Covid Deaths on " + dates[-1].strftime("%m/%d/%Y")
-barplot = figure(x_range=nameCountries, title=titletext)
+barplot = figure(x_range=nameCountries, title=titletext,height = 600,width=600)
 barplot.vbar(x=nameCountries, top=topDeaths, width=0.9)
 
 
@@ -68,43 +68,62 @@ x1 = ["Daily Deaths"]
 x2 = [nameCountries[0],nameCountries[1]]
 xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
 yplot = (dailyDeaths[0][-1],dailyDeaths[1][-1])
-smallplot1 = figure(x_range=FactorRange(*xplot), height=200, title=titletext,width=200,toolbar_location=None, tools="")
+smallplot1 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="")
 smallplot1.vbar(x=xplot, top=yplot, width=0.2, )
 
 x1 = ["Total Deaths"]
 x2 = [nameCountries[0],nameCountries[1]]
 xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
 yplot = (totalDeaths[0][-1],totalDeaths[1][-1])
-smallplot2 = figure(x_range=FactorRange(*xplot), height=200,width=200,toolbar_location=None, tools="")
+smallplot2 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="", title=titletext)
 smallplot2.vbar(x=xplot, top=yplot, width=0.2 )
 
 x1 = ["Daily Deaths per 100k"]
 x2 = [nameCountries[0],nameCountries[1]]
 xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
 yplot = (dailyDper100[0][-1],dailyDper100[1][-1])
-smallplot3 = figure(x_range=FactorRange(*xplot), height=200,width=200,toolbar_location=None, tools="")
+smallplot3 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="")
 smallplot3.vbar(x=xplot, top=yplot, width=0.2 )
 
 x1 = ["Total Deaths per 100k"]
 x2 = [nameCountries[0],nameCountries[1]]
 xplot = [(x1s,x2s) for x1s in x1 for x2s in x2]
 yplot = (totalDper100[0][-1],totalDper100[1][-1])
-smallplot4 = figure(x_range=FactorRange(*xplot), height=200,width=200,toolbar_location=None, tools="")
-smallplot4.vbar(x=xplot, top=yplot, width=0.2 )
+smallplot4 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="")
+smallplot4.vbar(x=xplot, top=yplot, width=0.2)
 
 smallplots1 = row(smallplot1,smallplot2)
 smallplots2 = row(smallplot3,smallplot4)
 smallplot = column(smallplots1,smallplots2)
 
 
-#interactive plot
-#will use slider for range, and 
+#interactive plot, uses tabs
+tabs = []
+for i in range(0,numCountries):
+    plot = figure(x_axis_type="datetime",width=600, height=600,title="Daily Deaths per 100k")
+    plot.line(dates,dailyDper100[i])
+    tab = TabPanel(child=plot,title=nameCountries[i])
+    tabs.append(tab)
+tabplot=Tabs(tabs=tabs)
+
+htmlTitle = """
+ <!DOCTYPE html>
+<html>
+<body>
+<h1>Covid Dashboard 2022</h1>
+<p>By James Rosenberg and Brooke Boone</p>
+
+</body>
+</html> 
+"""
+
+
 
 #put all the plots into rows and columns
-row1 = row(lineplot, barplot) #historical data, bar with all countries and 1 piece of data
-row2 = row(smallplot, barplot) # data for first 2 countries, interactive plot
+row1 = row( barplot,smallplot) #historical data, bar with all countries and 1 piece of data
+row2 = row(lineplot,tabplot) # data for first 2 countries, interactive plot
 dashboard = column(row1,row2)
-html = file_html(dashboard, CDN, "COVID Dashboard")
+html = htmlTitle + file_html(dashboard, CDN, "COVID Dashboard")
 f = open('CovidDashboard.html', 'w')
 f.write(html)
 f.close()
