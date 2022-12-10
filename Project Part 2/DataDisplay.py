@@ -43,7 +43,7 @@ def dataDisplay(jsonName):
 
 
     #plotting historical data as a line graph
-    lineplot = figure(x_axis_type="datetime", title="Daily Deaths since 2022-02-15",height=600,width=600)
+    lineplot = figure(x_axis_type="datetime", title="Daily Deaths since 2020-02-15",height=600,width=600)
     colorNames = viridis(numCountries)
     for i in range(0,numCountries):
         Cname = nameCountries[i]
@@ -59,7 +59,7 @@ def dataDisplay(jsonName):
     titletext = "Total Covid Deaths on " + dates[-1].strftime("%m/%d/%Y")
     barplot = figure(x_range=nameCountries, title=titletext,height = 600,width=600)
     barplot.vbar(x=nameCountries, top=topDeaths, width=0.9)
-
+    barplot.yaxis.formatter.use_scientific = False
 
     # only using 2 countries, displaying all of their data
     #Make title be htmal or something, it gets cut off
@@ -78,6 +78,7 @@ def dataDisplay(jsonName):
     yplot = (totalDeaths[0][-1],totalDeaths[1][-1])
     smallplot2 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="", title=titletext)
     smallplot2.vbar(x=xplot, top=yplot, width=0.2 )
+    smallplot2.yaxis.formatter.use_scientific = False
 
     x1 = ["Daily Deaths per 100k"]
     x2 = [nameCountries[0],nameCountries[1]]
@@ -85,6 +86,7 @@ def dataDisplay(jsonName):
     yplot = (dailyDper100[0][-1],dailyDper100[1][-1])
     smallplot3 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="")
     smallplot3.vbar(x=xplot, top=yplot, width=0.2 )
+    smallplot3.yaxis.formatter.use_scientific = False
 
     x1 = ["Total Deaths per 100k"]
     x2 = [nameCountries[0],nameCountries[1]]
@@ -92,6 +94,7 @@ def dataDisplay(jsonName):
     yplot = (totalDper100[0][-1],totalDper100[1][-1])
     smallplot4 = figure(x_range=FactorRange(*xplot), height=300,width=300,toolbar_location=None, tools="")
     smallplot4.vbar(x=xplot, top=yplot, width=0.2)
+    smallplot4.yaxis.formatter.use_scientific = False
 
     smallplots1 = row(smallplot1,smallplot2)
     smallplots2 = row(smallplot3,smallplot4)
@@ -103,6 +106,7 @@ def dataDisplay(jsonName):
     for i in range(0,numCountries):
         plot = figure(x_axis_type="datetime",width=600, height=600,title="Daily Deaths per 100k")
         plot.line(dates,dailyDper100[i])
+        plot.yaxis.formatter.use_scientific = False
         tab = TabPanel(child=plot,title=nameCountries[i])
         tabs.append(tab)
     tabplot=Tabs(tabs=tabs)
