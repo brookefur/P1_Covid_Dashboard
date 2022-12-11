@@ -112,9 +112,9 @@ def dataDisplay(jsonName):
     #interactive plot, uses tabs
     tabs = []
     for i in range(0,numCountries):
-        plot = figure(x_axis_type="datetime",width=600, height=600,title="Total Deaths per 100k (Rolling Average = 7 days)")
+        plot = figure(x_axis_type="datetime",width=600, height=600,title="2021 Total Deaths per 100k (Rolling Average = 7 days)")
         rolling_mean = pd.Series(totalDper100[i]).rolling(7).mean()
-        plot.line(dates,rolling_mean, line_width=1.5, color=colorNames[i])
+        plot.line(dates[321:685],rolling_mean[321:685], line_width=1.5, color=colorNames[i])
         plot.yaxis.formatter.use_scientific = False
         tab = TabPanel(child=plot,title=nameCountries[i])
         tabs.append(tab)
