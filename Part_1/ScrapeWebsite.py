@@ -75,8 +75,8 @@ def WorldometerScrape_country(country,website,ReturnType,weblist,country_dict):
     df['Dates']=format_dates
     df['Daily Deaths']=daily_deaths
     df['Total Deaths']=cum_deaths  
-    df['Daily Deaths per 100k']=np.divide(daily_deaths,int(country_dict[country][0]))
-    df['Total Deaths per 100k']=np.divide(cum_deaths,int(country_dict[country][0]))
+    df['Daily Deaths per 100k']=np.divide(daily_deaths,int(country_dict[country][0]))*100000
+    df['Total Deaths per 100k']=np.divide(cum_deaths,int(country_dict[country][0]))*100000
     print(country+"--- %s seconds ---" % (time.time() - start_time))##### cycle time check
 ### sets the output type
     if ReturnType=='pandas': 
