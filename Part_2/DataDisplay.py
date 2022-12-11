@@ -36,7 +36,11 @@ def dataDisplay(jsonName):
     #all dates for all countries are the same
     #this adds data in order of the countries
     for i in covidData.keys():
-        nameCountries.append(i)
+        if len(i)>3:
+            name=i.capitalize()
+        else:
+            name=i.upper()
+        nameCountries.append(name)
         dailyDeaths.append(list(covidData[i]['Daily Deaths'].values()))
         totalDeaths.append(list(covidData[i]['Total Deaths'].values()))
         dailyDper100.append(list(covidData[i]['Daily Deaths per 100k'].values()))
